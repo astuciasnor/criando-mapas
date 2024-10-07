@@ -54,7 +54,7 @@
 
 # 6) Criando intervalo de classe dos CASOS ACUMULADOS -----------------------------
   
-  # Criando dados para criarr uma categorização de valores 
+  # Criando dados para criarr uma categorização de valores de dados hipotéticos para entender a cut 
   x = c(0, 200, 2000, 4000, 6000, 10000)  # Valores mais consistentes a serem categorizados
   
   # Definindo intervalos coerentes e rótulos adequados
@@ -95,7 +95,7 @@
                                  "#FE9929", "#CC4C02", "#662506"))
   
   gg
-# 8) Colocando a escala ~de orientaço do mapa ------------------------------
+# 8) Colocando a escala e a orientação do mapa ------------------------------
   library(ggspatial)
   # colocando a escala
   gg + annotation_scale(location = 'br', height = unit(0.2, "cm"))    # br: bottompright
