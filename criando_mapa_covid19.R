@@ -6,12 +6,15 @@
 
 # 1) Preparação e carregamento de limites poligonais dos municipios -------------------------
   library(geobr) # Esse pacote acessa os dados dos limites dos estado sem a necessidade de ir no site IBGE
-  library(sf)     #sf: simple feature
+  library(sf)     # sf: simple feature
 
 # acessa os limites terrotoriais de qualquer municipio brasileiro ou estado
   lim.estados = read_state(code_state = 'all') # Acessa os limites de estados
   class(lim.estados) # Esses dados, al?m de ter os limites, tem caracter?sicas, como popula??o, etc
+lim_PA <- read_state(code_state = "PA")
 
+# ggplot(lim_PA) +
+#   geom_sf()
 
 # 2) Criando o primeiro mapa simples --------------------------
   library(ggplot2)
@@ -92,7 +95,9 @@
   
   gg = ggplot(juntos) + geom_sf(aes(fill = categoria)) + 
     scale_fill_manual(values = c("#FFFFE5", "#FFF7BC", "#FEE391",
-                                 "#FE9929", "#CC4C02", "#662506"))
+                                 "#FE9929", "#CC4C02", "#662506")) 
+    # scale_fill_manual(values = c("#FEE0D2","#FCBBA1", "#FC9272", "#EF3B2C",
+    #                              "#A50F15", "#67000D"))
   
   gg
 # 8) Colocando a escala e a orientação do mapa ------------------------------
