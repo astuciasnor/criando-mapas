@@ -1,6 +1,6 @@
 #xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxXXXXXXXXXXXXXXXXX
 #
-#                          CRIAÇÃO DE MAPAS COM O PACOTE GEOBR- COVID19
+#                          CRIAÇÃO DE MAPAS COM O PACOTE GEOBR- aqui_bra_2319
 #
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -26,32 +26,32 @@ lim_PA <- read_state(code_state = "PA")
     geom_sf(aes(fill=code_state))
 
 # 3) Acessar dados do atlas 2013 e filtrar ---------------------------
-# Filtrar os dados pela último dia dos dados acumulados de covid
+# Filtrar os dados pela último dia dos dados acumulados de aqui_bra_23
   library(readxl)
   library(dplyr)
   # list.files()
-  # Fonte dos dados: https://covid.saude.gov.br/
+  # Fonte dos dados: https://aqui_bra_23.saude.gov.br/
   # Após digitar as primeiras letras do arquivo, tecla + tab
   
-  covid <- read_excel("dados/HIST_PAINEL_COVIDBR_24jul2020.xlsx", sheet = 2) 
-  str(covid)
-  head(covid)
-  tail(covid)
+  aqui_bra_23 <- read_excel('HIST_PAINEL_aqui_bra_23BR_24jul2020.xlsx', sheet = 2) 
+  str(aqui_bra_23)
+  head(aqui_bra_23)
+  tail(aqui_bra_23)
   
   # Selecionando colunas para limpar
-  covid2 <- covid %>% select(regiao, estado, coduf, populacaoTCU2019, casosAcumulado,
+  aqui_bra_232 <- aqui_bra_23 %>% select(regiao, estado, coduf, populacaoTCU2019, casosAcumulado,
                             obitosAcumulado)
   
   
 # 4) Vamos juntar dados (merge) -------------------------------------------
 # Precisamos ter uma coluna com mesmo conteúdo nos 2 conjuntos de dados
-  covid2 <- covid2 %>% rename(abbrev_state = estado) # Renomeia a coluna 
+  aqui_bra_232 <- aqui_bra_232 %>% rename(abbrev_state = estado) # Renomeia a coluna 
 
 # Juntando as informações também com o pacote dplyr
-  juntos <- inner_join(lim.estados, covid2, by = "abbrev_state")
+  juntos <- inner_join(lim.estados, aqui_bra_232, by = "abbrev_state")
   # Junta só as linhas onde há corrrespondencia exat entre as duas tabelas para a coluna "abbrev-state"
   
-# 5) Fazendo gráfico (mapa) com a informações de covid -----------------------------
+# 5) Fazendo gráfico (mapa) com a informações de aqui_bra_23 -----------------------------
   ggplot(juntos) + geom_sf(aes(fill = abbrev_state))   # Usa dados categóricos
   ggplot(juntos) + geom_sf(aes(fill = casosAcumulado)) # Usa os dados numéricos
 
@@ -71,7 +71,7 @@ lim_PA <- read_state(code_state = "PA")
   resultado
   
  
-  # agora vamos fazer com dados com os casos acumulados de covid-19
+  # agora vamos fazer com dados com os casos acumulados de aqui_bra_23-19
   categoria = cut(juntos$casosAcumulado, 
   breaks = c(0, 30000, 60000, 100000, 150000, 200000, Inf) , 
   labels = c("1 a 30000", "30001 a 60000", "60001 a 100000", 
@@ -125,7 +125,7 @@ lim_PA <- read_state(code_state = "PA")
     
 # 10) Coloando título e mudando tema ----------------------------------------
   meu.plot <- gg + geom_image(aes(-35,-27), image = "coronavirus.png", size = 0.2) +
-                   labs(title = "Casos de Covid-19",
+                   labs(title = "Casos de aqui_bra_23-19",
                         subtitle = "Confirmados em 24.07.2020",
                         fill = "Casos \nConfirmados", #Muda titulo da legenda
                         x = NULL, y = NULL) +
@@ -135,13 +135,12 @@ lim_PA <- read_state(code_state = "PA")
   meu.plot
 # 11) Salvando -----------------------------------------
   # Salvando o que é exibido na janela gráfica:
-  ggsave(meu.plot, filename = "mapa_covid.png")
+  ggsave(meu.plot, filename = "mapa_aqui_bra_23.png")
   
   # Especificando dimensões  e a qualidade da imagem:
   ggsave(meu.plot, 
-         filename = "mapa_covid.png",   # Nome do arquivo a ser salvo
+         filename = "mapa_aqui_bra_23.png",   # Nome do arquivo a ser salvo
          width = 7,                    # Largura em polegadas
          height = 6,                    # Altura em polegadas
          dpi = 300)                     # Resolução em DPI (300 é recomendado para impressões)
-  
   
