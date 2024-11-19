@@ -3,6 +3,7 @@
 #                          CRIAÇÃO DE MAPAS COM O PACOTE GEOBR- aqui_bra_2319
 #
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# Criação de mapa do Brasil com produção da aquiculutra
 
 # 1) Preparação e carregamento de limites poligonais dos municipios -------------------------
   library(geobr) # Esse pacote acessa os dados dos limites dos estado sem a necessidade de ir no site IBGE
@@ -11,7 +12,7 @@
 # acessa os limites terrotoriais de qualquer municipio brasileiro ou estado
   lim.estados = read_state(code_state = 'all') # Acessa os limites de estados
   class(lim.estados) # Esses dados, al?m de ter os limites, tem caracter?sicas, como popula??o, etc
-lim_PA <- read_state(code_state = "PA")
+  lim_PA <- read_state(code_state = "PA")
 
 # ggplot(lim_PA) +
 #   geom_sf()
@@ -20,10 +21,14 @@ lim_PA <- read_state(code_state = "PA")
   library(ggplot2)
   ggplot(lim.estados) + # informa qual conjunto de dados o ggplot usará (dados geoespaciais)
     geom_sf()   # informa o tipo de função gráfica sobre os tipos de dados (sf: spatial features) 
-
+  
+  ggplot(lim_PA) + 
+    geom_sf()
+  
 # Vamos colorir de acordo com o codigos dos estados
   ggplot(lim.estados) + 
     geom_sf(aes(fill=code_state))
+  
 
 # 3) Acessar dados do atlas 2013 e filtrar ---------------------------
 # Filtrar os dados pela último dia dos dados acumulados de aqui_bra_23
@@ -33,27 +38,24 @@ lim_PA <- read_state(code_state = "PA")
   # Fonte dos dados: https://aqui_bra_23.saude.gov.br/
   # Após digitar as primeiras letras do arquivo, tecla + tab
   
-  aqui_bra_23 <- read_excel('HIST_PAINEL_aqui_bra_23BR_24jul2020.xlsx', sheet = 2) 
+  aqui_bra_23 <- read_excel("dados/tabela_geral_estados.xlsx", sheet = 2) |> 
+    filter(Ano == 2023) # Filtra pelo ano desejado
   str(aqui_bra_23)
   head(aqui_bra_23)
   tail(aqui_bra_23)
   
-  # Selecionando colunas para limpar
-  aqui_bra_232 <- aqui_bra_23 %>% select(regiao, estado, coduf, populacaoTCU2019, casosAcumulado,
-                            obitosAcumulado)
-  
-  
+
 # 4) Vamos juntar dados (merge) -------------------------------------------
 # Precisamos ter uma coluna com mesmo conteúdo nos 2 conjuntos de dados
-  aqui_bra_232 <- aqui_bra_232 %>% rename(abbrev_state = estado) # Renomeia a coluna 
+  aqui_bra_23 <- aqui_bra_23 %>% rename(abbrev_state = Estado) # Renomeia a coluna 
 
 # Juntando as informações também com o pacote dplyr
-  juntos <- inner_join(lim.estados, aqui_bra_232, by = "abbrev_state")
+  juntos <- inner_join(lim.estados, aqui_bra_23, by = "abbrev_state")
   # Junta só as linhas onde há corrrespondencia exat entre as duas tabelas para a coluna "abbrev-state"
   
 # 5) Fazendo gráfico (mapa) com a informações de aqui_bra_23 -----------------------------
   ggplot(juntos) + geom_sf(aes(fill = abbrev_state))   # Usa dados categóricos
-  ggplot(juntos) + geom_sf(aes(fill = casosAcumulado)) # Usa os dados numéricos
+  ggplot(juntos) + geom_sf(aes(fill = `Producao(t)`)) # Usa os dados numéricos
 
 # 6) Criando intervalo de classe dos CASOS ACUMULADOS -----------------------------
   
@@ -71,7 +73,7 @@ lim_PA <- read_state(code_state = "PA")
   resultado
   
  
-  # agora vamos fazer com dados com os casos acumulados de aqui_bra_23-19
+  # agora vamos fazer com dados de produção (ton) de aqui_bra_23-19
   categoria = cut(juntos$casosAcumulado, 
   breaks = c(0, 30000, 60000, 100000, 150000, 200000, Inf) , 
   labels = c("1 a 30000", "30001 a 60000", "60001 a 100000", 
