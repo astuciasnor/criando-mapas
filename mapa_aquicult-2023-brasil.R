@@ -6,8 +6,9 @@
 # Criação de mapa do Brasil com produção da aquiculutra
 
 # 1) Preparação e carregamento de limites poligonais dos municipios -------------------------
-  library(geobr) # Esse pacote acessa os dados dos limites dos estado sem a necessidade de ir no site IBGE
+  library(geobr)# Esse pacote acessa os dados dos limites dos estado sem a necessidade de ir no site IBGE
   library(sf)     # sf: simple feature
+
 
 # acessa os limites terrotoriais de qualquer municipio brasileiro ou estado
   lim.estados = read_state(code_state = 'all') # Acessa os limites de estados
@@ -57,12 +58,12 @@
   
   # Categorizando os dados:
   categoria <- cut(juntos$`Producao(t)`,  # Dados originais
-                  breaks = c(0, 5000, 15000, 30000, 70000, Inf), # Defindo os breakpoints
+                  breaks = c(0, 5000, 15000, 30000, 100000, Inf), # Defindo os breakpoints
                   labels = c("1 - 5000", 
                              "5001 - 15.000", 
                              "15.001 - 30.000", 
-                             "30.001 - 70.000", 
-                             "70.001 - Inf" ),
+                             "30.001 - 100.000", 
+                             "100.001 - Inf" ),
                   include.lowest = TRUE,
                   right = FALSE)
  
@@ -80,9 +81,11 @@
   display.brewer.pal(n=9, name = "Reds")
   cor = brewer.pal(9, 'Reds')
   
+  cores_vermelhas <- c("#FEE5D9", "#FCBBA1", "#FC9272", "#FB6A4A", "#DE2D26","#A50F15")
+  cores_azuis <-c("#DEEBF7", "#C6DBEF", "#9ECAE1", "#6BAED6", "#3182BD", "#08519C")
+  
   gg = ggplot(juntos) + geom_sf(aes(fill = categoria)) + 
-    scale_fill_manual(values = c("#FFFFE5", "#FFF7BC", "#FEE391",
-                                 "#FE9929", "#CC4C02", "#662506")) 
+    scale_fill_manual(values = cores_azuis) 
     # scale_fill_manual(values = c("#FEE0D2","#FCBBA1", "#FC9272", "#EF3B2C",
     #                              "#A50F15", "#67000D"))
   
@@ -131,4 +134,5 @@
          width = 7,                    # Largura em polegadas
          height = 6,                    # Altura em polegadas
          dpi = 300)                     # Resolução em DPI (300 é recomendado para impressões)
+  
   
