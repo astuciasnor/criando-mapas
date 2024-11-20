@@ -14,9 +14,6 @@
   class(lim.estados) # Esses dados, al?m de ter os limites, tem caracter?sicas, como popula??o, etc
   lim_PA <- read_state(code_state = "PA")
 
-# ggplot(lim_PA) +
-#   geom_sf()
-
 # 2) Criando o primeiro mapa simples --------------------------
   library(ggplot2)
   ggplot(lim.estados) + # informa qual conjunto de dados o ggplot usará (dados geoespaciais)
@@ -30,13 +27,12 @@
     geom_sf(aes(fill=code_state))
   
 
-# 3) Acessar dados do atlas 2013 e filtrar ---------------------------
-# Filtrar os dados pela último dia dos dados acumulados de aqui_bra_23
+# 3) Acessar dados da Revista PeixeBr 2023 ---------------------------
+# Filtrar os dados pelo ano de 2023 de aqui_bra_23
   library(readxl)
   library(dplyr)
-  # list.files()
-  # Fonte dos dados: https://aqui_bra_23.saude.gov.br/
-  # Após digitar as primeiras letras do arquivo, tecla + tab
+# Fonte dos dados: link da peixe-br
+ 
   
   aqui_bra_23 <- read_excel("dados/tabela_geral_estados.xlsx", sheet = 2) |> 
     filter(Ano == 2023) # Filtra pelo ano desejado
@@ -59,34 +55,23 @@
 
 # 6) Criando intervalo de classe dos CASOS ACUMULADOS -----------------------------
   
-  # Criando dados para criarr uma categorização de valores de dados hipotéticos para entender a cut 
-  x = c(0, 200, 2000, 4000, 6000, 10000)  # Valores mais consistentes a serem categorizados
-  
-  # Definindo intervalos coerentes e rótulos adequados
-  y = cut(x, 
-          breaks = c(0, 200, 2000, 4000, 6000, Inf),  # Intervalos ajustados
-          labels = c("1 a 200", "201 a 2000", "2001 a 4000", "4001 a 6000", "Mais de 6000"),  # Rótulos coerentes
-          right = TRUE)  # Intervalos fechados à direita (inclusivos no limite superior)
-  
-  # Criando um data frame para visualizar os resultados
-  resultado <- data.frame(Valores = x, Categoria = y)
-  resultado
-  
+  # Categorizando os dados:
+  categoria <- cut(juntos$`Producao(t)`,  # Dados originais
+                  breaks = c(0, 5000, 15000, 30000, 70000, Inf), # Defindo os breakpoints
+                  labels = c("1 - 5000", 
+                             "5001 - 15.000", 
+                             "15.001 - 30.000", 
+                             "30.001 - 70.000", 
+                             "70.001 - Inf" ),
+                  include.lowest = TRUE,
+                  right = FALSE)
  
-  # agora vamos fazer com dados de produção (ton) de aqui_bra_23-19
-  categoria = cut(juntos$casosAcumulado, 
-  breaks = c(0, 30000, 60000, 100000, 150000, 200000, Inf) , 
-  labels = c("1 a 30000", "30001 a 60000", "60001 a 100000", 
-             "100001 a 150000", "150001 a 200000", "Mais de 200000"))
   
-  # Vamos verificar se os dados foram atribuidos a categorias corretas
-  data.frame(juntos$casosAcumulado, categoria)
-  
-  # Colocando as faixas no conjuntos de dados chamados juntos
+  # Colocando as faixas de categorias no conjuntos de dados chamados juntos
   juntos$categoria = categoria
   head(juntos)
   
-# 7) Plotando agora pela coluna categoria -----------------------------------
+  # 7) Plotando agora pela coluna categoria -----------------------------------
   ggplot(juntos) + geom_sf(aes(fill = categoria))
 
 # Modificando com uma paleta de cores manualmente
@@ -122,20 +107,21 @@
   
 # 9) Colocando uma imagem no mapa -----------------------------------
   library(ggimage)
-  gg + geom_image(aes(-35,-27), image = "coronavirus.png", size = 0.2)
+  gg + geom_image(aes(-35,-27), image = "images/coronavirus.png", size = 0.2)
                  
     
 # 10) Coloando título e mudando tema ----------------------------------------
-  meu.plot <- gg + geom_image(aes(-35,-27), image = "coronavirus.png", size = 0.2) +
-                   labs(title = "Casos de aqui_bra_23-19",
-                        subtitle = "Confirmados em 24.07.2020",
-                        fill = "Casos \nConfirmados", #Muda titulo da legenda
+  meu.plot <- gg + geom_image(aes(-35,-27), image = "images/coronavirus.png", size = 0.2) +
+                   labs(title = "Produção Aquicola do Brasil",
+                        subtitle = "Ano de 2023",
+                        fill = "Produção (ton)", #Muda titulo da legenda
                         x = NULL, y = NULL) +
                    theme_bw()+
               theme(legend.position = c(0.18, 0.2),
                     legend.key.height = unit(5, "mm"))
   meu.plot
-# 11) Salvando -----------------------------------------
+
+  # 11) Salvando -----------------------------------------
   # Salvando o que é exibido na janela gráfica:
   ggsave(meu.plot, filename = "mapa_aqui_bra_23.png")
   
